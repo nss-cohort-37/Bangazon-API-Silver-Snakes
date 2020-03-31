@@ -1,8 +1,10 @@
 # Building the Bangazon Platform API
 
-Welcome, new Bangazonians!
+Welcome, new Bangazonians, to the engineering team here at bangazon.com! Our niche platform connects home aquarium enthusiasts to be able to buy and sell products like fish tanks, filters, fish food, pumps, accessories, etc.
 
-Your job is to build out a .NET Web API that makes each resource in the Bangazon database available to application developers throughout the entire company.
+Our immediate need for an application is an internal tool that can be used by our customer service team and our human resources team.
+
+Your team has been assigned to build out a .NET Web API that makes each resource in the Bangazon database available to application developers throughout the rest of the engineering department.
 
 1. Products
 1. Product types
@@ -14,13 +16,13 @@ Your job is to build out a .NET Web API that makes each resource in the Bangazon
 1. Training programs
 1. Departments
 
-> **Pro tip:** You do not need to make a Controller for the join tables, because those aren't resources.
+> **Pro tip:** You do not need to make a Controller for the join tables (i.e. EmployeeTrainingProgram), because those aren't resources.
 
-The front end team has been given a prototype API to help them implement a React web application. The prototype is built similar to JSON Server and not a actual long-term solution for persisting and retrieving data. It's now your team's job to build a production ready API to replace the prototype.
+The front end team has been given a prototype API to help them implement a React web application. The prototype is built similar to JSON Server and not a actual long-term solution for persisting and retrieving data. We need your team to build a production ready API to replace the prototype.
 
 If you complete all tickets in your backlog, you should have the following endpoints implemented.
 
-Your front end developers are expecting data back from your API that looks exactly like what's listed below. If certain properties don't match, the client application will break. **NOTE** Don't worry about any differences in dummy data the prototype uses vs the data in _your_ database. The only thing that is important is that the shape of each resource should match exactly.
+Your front end developers are expecting data back from your API that looks exactly like what's listed below. If the properties don't match, the client application will break. **NOTE** Don't worry about any differences in dummy data the prototype uses vs the data in _your_ database. The only thing that is important is that the shape of each resource should match exactly.
 
 To see examples from the prototype API you can use this base URL:
 
@@ -152,7 +154,7 @@ https://bangazon-prototype-api.herokuapp.com/
 
 ## Plan
 
-First, you need to plan. Your team needs to use the official SQL script (see below) and build a  Bangazon ERD using [dbdiagram.io](dbdiagram.io). Once your team agrees that the ERD is complete, you must get it approved by your lead developer before you begin writing code for the API.
+First, you need to plan. The official SQL script for creating the database is already in this repository (see below). Before you start coding, take a moment and look at the SQL script and build a Bangazon ERD using [dbdiagram.io](dbdiagram.io). Once your team agrees that the ERD is complete, you must get it approved by your lead developer before you begin writing code for the API.
 
 ## Modeling
 
