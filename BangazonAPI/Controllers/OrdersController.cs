@@ -80,10 +80,6 @@ namespace BangazonAPI.Controllers
                                     Description = reader.GetString(reader.GetOrdinal("Description")),
                                 });
                             }
-                            //else
-                            //{
-                            //    return new StatusCodeResult(StatusCodes.Status204NoContent);
-                            //}
                         }
                         reader.Close();
                         return Ok(order);
