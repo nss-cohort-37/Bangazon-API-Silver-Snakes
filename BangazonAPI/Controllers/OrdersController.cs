@@ -121,18 +121,37 @@ namespace BangazonAPI.Controllers
 
                     List<Order> orders = new List<Order>();
 
+                    Order order = null;
+
                     while (reader.Read())
                     {
-                        Order order = new Order()
+                        if (order == null)
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId"))
-                        };
-                        if (!reader.IsDBNull(reader.GetOrdinal("UserPaymentTypeId")))
-                        {
-                            order.UserPaymentTypeId = reader.GetInt32(reader.GetOrdinal("UserPaymentTypeId"));
+                            Order order = new Order()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
+                                Products = new List<Product>()
+                            };
+                            if (!reader.IsDBNull(reader.GetOrdinal("UserPaymentTypeId")))
+                            {
+                                order.UserPaymentTypeId = reader.GetInt32(reader.GetOrdinal("UserPaymentTypeId"));
+                            }
                         }
-                        orders.Add(order);
+
+                        if (cart == true)
+                        {
+                            order.Products.Add(new Product()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                DateAdded = reader.GetDateTime(reader.GetOrdinal("DateAdded")),
+                                ProductTypeId = reader.GetInt32(reader.GetOrdinal("ProductTypeId")),
+                                CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
+                                Price = reader.GetDecimal(reader.GetOrdinal("Price")),
+                                Title = reader.GetString(reader.GetOrdinal("Title")),
+                                Description = reader.GetString(reader.GetOrdinal("Description")),
+                            });
+                        }
                     }
                     reader.Close();
 
