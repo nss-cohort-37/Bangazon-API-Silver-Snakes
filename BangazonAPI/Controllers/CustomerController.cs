@@ -149,9 +149,11 @@ namespace BangazonAPI.Controllers
                     cmd.CommandText = @"INSERT INTO Customer (FirstName, LastName,  CreatedDate, Active, Address, City, State, Email, Phone)
                                         OUTPUT INSERTED.Id
                                         VALUES (@FirstName, @LastName, @CreatedDate, @Active, @Address, @City, @State, @Email, @Phone )";
+
+                    
                     cmd.Parameters.Add(new SqlParameter("@FirstName", customer.FirstName));
                     cmd.Parameters.Add(new SqlParameter("@LastName", customer.LastName));
-                    cmd.Parameters.Add(new SqlParameter("@CreatedDate", customer.CreatedDate));
+                    cmd.Parameters.Add(new SqlParameter("@CreatedDate", DateTime.Now));
                     cmd.Parameters.Add(new SqlParameter("@Active", customer.Active));
                     cmd.Parameters.Add(new SqlParameter("@Address", customer.Address));
                     cmd.Parameters.Add(new SqlParameter("@City", customer.City));
@@ -163,6 +165,7 @@ namespace BangazonAPI.Controllers
 
                     int newId = (int)cmd.ExecuteScalar();
                     customer.Id = newId;
+                    customer.CreatedDate = DateTime.Now;
                     return CreatedAtRoute("GetCustomer", new { id = newId }, customer);
                 }
             }
@@ -192,7 +195,6 @@ namespace BangazonAPI.Controllers
                         cmd.Parameters.Add(new SqlParameter("@Id", customer.Id));
                         cmd.Parameters.Add(new SqlParameter("@FirstName", customer.FirstName));
                         cmd.Parameters.Add(new SqlParameter("@LastName", customer.LastName));
-                        cmd.Parameters.Add(new SqlParameter("@CreatedDate", customer.CreatedDate));
                         cmd.Parameters.Add(new SqlParameter("@Active", customer.Active));
                         cmd.Parameters.Add(new SqlParameter("@Address", customer.Address));
                         cmd.Parameters.Add(new SqlParameter("@City", customer.City));
