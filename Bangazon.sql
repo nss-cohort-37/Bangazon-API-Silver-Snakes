@@ -4,14 +4,27 @@ GO
 IF NOT EXISTS (
     SELECT [name]
     FROM sys.databases
-    WHERE [name] = N'BangazonAPI35'
+    WHERE [name] = N'BangazonAPI'
 )
-CREATE DATABASE BangazonAPI35
+CREATE DATABASE BangazonAPI
 GO
 
-USE BangazonAPI35
+USE BangazonAPI
 GO
 
+DROP TABLE IF EXISTS OrderProduct;
+DROP TABLE IF EXISTS [Order];
+DROP TABLE IF EXISTS UserPaymentType;
+DROP TABLE IF EXISTS EmployeeTraining;
+DROP TABLE IF EXISTS OrderProduct;
+DROP TABLE IF EXISTS TrainingProgram;
+DROP TABLE IF EXISTS Employee;
+DROP TABLE IF EXISTS Department;
+DROP TABLE IF EXISTS Computer;
+DROP TABLE IF EXISTS Product;
+DROP TABLE IF EXISTS ProductType;
+DROP TABLE IF EXISTS Customer;
+DROP TABLE IF EXISTS PaymentType;
 
 CREATE TABLE Department (
 	Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
@@ -117,10 +130,12 @@ CREATE TABLE OrderProduct (
     CONSTRAINT FK_OrderProduct_Order FOREIGN KEY(OrderId) REFERENCES [Order](Id)
 );
 
-INSERT INTO Department([Name],Budget) VALUES ('Marketing',415000);
-INSERT INTO Department([Name],Budget) VALUES ('Engineering',57200);
-INSERT INTO Department([Name],Budget) VALUES ('Accounting',123000);
-INSERT INTO Department([Name],Budget) VALUES ('Legal',923000);
+INSERT INTO Department([Name],Budget) VALUES ('Marketing',115000);
+INSERT INTO Department([Name],Budget) VALUES ('Engineering',197200);
+INSERT INTO Department([Name],Budget) VALUES ('Accounting',90000);
+INSERT INTO Department([Name],Budget) VALUES ('Legal',123000);
+INSERT INTO Department([Name],Budget) VALUES ('Human Resources',103000);
+INSERT INTO Department([Name],Budget) VALUES ('Customer Service',100000);
 
 INSERT INTO Computer(PurchaseDate,DecomissionDate,Make,Model) VALUES ('2016-01-01T23:28:56.782Z',NULL,'Apple','Macbook Pro');
 INSERT INTO Computer(PurchaseDate,DecomissionDate,Make,Model) VALUES ('2018-02-09T23:28:56.782Z',NULL,'Apple','Macbook Air');
@@ -157,6 +172,17 @@ INSERT INTO Customer(Active,FirstName,LastName,[Address],City,[State],Email,Phon
 INSERT INTO Customer(Active,FirstName,LastName,[Address],City,[State],Email,Phone, CreatedDate) VALUES (1,'Salmon','O''''Nions','100 Continue Blvd','Atlanta','Georgia','salmonstriker@gmail.com','6151237584','2018-09-25T00:00:00.000Z');
 INSERT INTO Customer(Active,FirstName,LastName,[Address],City,[State],Email,Phone, CreatedDate) VALUES (1,'Kimble','Peskett','508 Loop Cir','Nashville','Tennessee','peskykimble@hotmail.com','5671234567','2018-09-25T00:00:00.000Z');
 INSERT INTO Customer(Active,FirstName,LastName,[Address],City,[State],Email,Phone, CreatedDate) VALUES (0,'Laura','Darner','504 Timeout Way','New York City','New York','laura.d@yahoo.com','1987654321','2018-09-25T00:00:00.000Z');
+INSERT INTO Customer(Active,FirstName,LastName,[Address],City,[State],Email,Phone, CreatedDate) VALUES (1,'Gal','Fieri','999 Ranch Drive','Flavortown','New Jersey','zesty_flames88@hotmail.com','14132278989','2020-01-09T00:00:00.000Z');
+INSERT INTO Customer(Active,FirstName,LastName,[Address],City,[State],Email,Phone, CreatedDate) VALUES (1,'Sven','Glambus','3203 Lover''''s Lane','Booleanville','Minnesota','glambus.sven@hotmail.com','13239862981','2019-07-03T00:00:00.000Z');
+INSERT INTO Customer(Active,FirstName,LastName,[Address],City,[State],Email,Phone, CreatedDate) VALUES (1,'Treldo','Smith','444444446 Paul Rigggggaaaaal Blvd','Rolo Tony','Arkansas','spaghett@hotmail.com','14439865181','2019-07-03T00:00:00.000Z');
+INSERT INTO Customer(Active,FirstName,LastName,[Address],City,[State],Email,Phone, CreatedDate) VALUES (1,'Sven','Glambus','3203 Lover','Booleanville','Minnesota','glambus.sven@hotmail.com','19862981','2019-07-03T00:00:00.000Z');
+INSERT INTO Customer(Active,FirstName,LastName,[Address],City,[State],Email,Phone, CreatedDate) VALUES (0,'Varnald','Von Fig','308 N Duke St','Durham','North Carolina','swedishmeatballLuvr@hotmail.com','18739362955','2018-08-23T00:00:00.000Z');
+INSERT INTO Customer(Active,FirstName,LastName,[Address],City,[State],Email,Phone, CreatedDate) VALUES (0,'Frelldus','Avocado','43 Trout Lane','Bellingham','South Carolina','toast_is_most3357@hotmail.com','14139362955','2018-08-23T00:00:00.000Z');
+INSERT INTO Customer(Active,FirstName,LastName,[Address],City,[State],Email,Phone, CreatedDate) VALUES (1,'Helen','Von Fig','308 N Duke St','Durham','North Carolina','swedishmeatballH8r@hotmail.com','14029382955','2018-08-23T00:00:00.000Z');
+INSERT INTO Customer(Active,FirstName,LastName,[Address],City,[State],Email,Phone, CreatedDate) VALUES (0,'George','Jones','128 2nd Ave N','Nashville','Tennessee','swedishmeatballLuvr@hotmail.com','12229362955','2018-08-23T00:00:00.000Z');
+INSERT INTO Customer(Active,FirstName,LastName,[Address],City,[State],Email,Phone, CreatedDate) VALUES (0,'Horace','Smith','564 S Roxboro St','Durham','North Carolina','golfpal@yahoo.com','14135723987','2018-08-23T00:00:00.000Z');
+INSERT INTO Customer(Active,FirstName,LastName,[Address],City,[State],Email,Phone, CreatedDate) VALUES (1,'Jackie','Smith','52 Prospect Court','Northampton','Massachusetts','freejazzfan22@hotmail.com','14134423987','2018-08-23T00:00:00.000Z');
+INSERT INTO Customer(Active,FirstName,LastName,[Address],City,[State],Email,Phone, CreatedDate) VALUES (1,'Glanardo','Kiwi','','Durham','North Carolina','golfpal@yahoo.com','14135723987','2018-08-23T00:00:00.000Z');
 
 INSERT INTO ProductType([Name]) VALUES ('Tanks');
 INSERT INTO ProductType([Name]) VALUES ('Accessories');
@@ -170,21 +196,21 @@ INSERT INTO ProductType([Name]) VALUES ('Filters');
 INSERT INTO ProductType([Name]) VALUES ('Plants');
 INSERT INTO ProductType([Name]) VALUES ('Heaters');
 
-INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (2,3,76.91,'morbi ut odio cras mi pede malesuada in imperdiet et commodo','Passat','2019-08-25T00:00:00.000Z');
-INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (1,2,62.54,'pede ullamcorper augue a suscipit nulla elit ac nulla sed','Murci�lago LP640','2018-12-25T00:00:00.000Z');
-INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (3,1,79.32,'lacinia nisi venenatis tristique fusce congue diam id ornare imperdiet sapien urna pretium nisl ut','Loyale','2018-09-16T00:00:00.000Z');
-INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (4,3,10.94,'tristique in tempus sit amet sem fusce consequat nulla nisl nunc nisl','Millenia','2019-12-05T00:00:00.000Z');
-INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (5,5,66.57,'eget nunc donec quis orci eget orci vehicula condimentum curabitur','Accord','2019-06-14T00:00:00.000Z');
-INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (1,3,79.92,'semper rutrum nulla nunc purus phasellus in felis donec semper sapien a libero','Santa Fe','2019-09-25T00:00:00.000Z');
-INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (2,6,9.09,'dolor morbi vel lectus in quam fringilla rhoncus mauris enim leo rhoncus sed vestibulum sit amet','A3','2019-09-25T00:00:00.000Z');
-INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (6,7,20.93,'amet turpis elementum ligula vehicula consequat morbi a ipsum integer a nibh in quis justo maecenas rhoncus aliquam lacus','Corvette','2019-09-25T00:00:00.000Z');
-INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (1,5,53.45,'faucibus orci luctus et ultrices posuere cubilia curae duis faucibus','Discovery','2019-09-25T00:00:00.000Z');
-INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (1,2,18.28,'pellentesque ultrices phasellus id sapien in sapien iaculis congue vivamus metus arcu adipiscing molestie hendrerit at','SLX','2019-09-25T00:00:00.000Z');
-INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (4,7,72.25,'sapien varius ut blandit non interdum in ante vestibulum ante ipsum primis','Concorde','2019-09-25T00:00:00.000Z');
-INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (4,5,37.99,'eget nunc donec quis orci eget orci vehicula condimentum curabitur','Windstar','2019-09-25T00:00:00.000Z');
-INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (2,6,14.14,'curae mauris viverra diam vitae quam suspendisse potenti nullam porttitor lacus at turpis','Sunbird','2019-09-25T00:00:00.000Z');
-INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (4,6,51.05,'nec euismod scelerisque quam turpis adipiscing lorem vitae mattis nibh ligula nec sem duis aliquam convallis nunc proin at','XC60','2019-09-25T00:00:00.000Z');
-INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (1,5,67.83,'consequat metus sapien ut nunc vestibulum ante ipsum primis in faucibus','Rocky','2019-09-25T00:00:00.000Z');
+INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (1,3,176.91,'20 Gallon tank with heater and plant accessories','Tank/Aqarium','2019-08-25T00:00:00.000Z');
+INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (1,2,362.54,'80 Gallon black acrylic aquarium with stand','Tank/Aquarium','2018-12-25T00:00:00.000Z');
+INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (6,1,79.32,'Dry pellet fish food designed to sink. Ideal for most saltwater fish','Pellet Fish Food (24oz)','2018-09-16T00:00:00.000Z');
+INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (4,3,110.94,'Canister filter for freshwater and marine environments. Recommended for aquariums up to 100 gallons.','Cascade Canister Filter','2019-12-05T00:00:00.000Z');
+INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (5,5,66.57,'5 pound florencent colored gravel','Gravel (5lb bag)','2019-06-14T00:00:00.000Z');
+INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (5,3,79.92,'Naturally pollished gravel. Assorted colors','Decorative Pebbles','2019-09-25T00:00:00.000Z');
+INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (2,6,29.99,'Assorted pirate themed accessories for small bowl','Pirate Accessories','2019-09-25T00:00:00.000Z');
+INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (6,7,40.93,'Dry pellet fish food designed to sink. 1LB bag','Pellet Fish Food','2019-09-25T00:00:00.000Z');
+INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (1,5,353.45,'60 Gallon black acrylic aquarium with gold colored stand','Aquarium','2019-09-25T00:00:00.000Z');
+INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (10,2,118.28,'Perfect for 10+ gallons aquariums. Create a natural habitat in your aquarium for your fish and invertebrates. Provide natural resting and hiding places for your smaller fish and invertebrates','Aquarium Plant Bundle (5 species)','2019-09-25T00:00:00.000Z');
+INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (4,7,72.25,'Indoor & Outdoor use, Great for Bird Baths, lions head & Vase fountains and aquariums alike. NdFeB Magnets, aluminum oxide ceramic impeller shaft and epoxy resin guarantee the pump can work over 20,000 hours.','Submersible Water Pump with 6ft Power Cord','2019-09-25T00:00:00.000Z');
+INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (11,5,137.99,'Designed for a 30 - 60 gallon tank. Made with premium quartz and double sealed by black protective guard, this fish tank heater is resistant to explosion and corrosion, and protect fish and other livestocks from punching and scalding','300W Heater with LED Temp Control','2019-09-25T00:00:00.000Z');
+INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (2,6,44.14,'10 Peach colored seashells in small and medium sizes','Seashell Accessories','2019-09-25T00:00:00.000Z');
+INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (4,6,151.05,'Canister filter for freshwater and marine environments. Recommended for aquariums up to 100 gallons.','Cascade Canister Filter','2019-09-25T00:00:00.000Z');
+INSERT INTO Product(ProductTypeId,CustomerId,Price,[Description],Title,DateAdded) VALUES (8,5,67.83,'5 Gallon small round bowl','Round Bowl','2019-09-25T00:00:00.000Z');
 
 INSERT INTO PaymentType([Name],Active) VALUES ('Mastercard',1);
 INSERT INTO PaymentType([Name],Active) VALUES ('Visa',1);
@@ -192,10 +218,18 @@ INSERT INTO PaymentType([Name],Active) VALUES ('Discover',1);
 INSERT INTO PaymentType([Name],Active) VALUES ('American Express',1);
 INSERT INTO PaymentType([Name],Active) VALUES ('Diners Club',0)
 
-INSERT INTO UserPaymentType(CustomerId,PaymentTypeId,AcctNumber,Active) VALUES (1,5,'2234 56789 0123',1);
+INSERT INTO UserPaymentType(CustomerId,PaymentTypeId,AcctNumber,Active) VALUES (1,5,'2234 56789 2123',1);
 INSERT INTO UserPaymentType(CustomerId,PaymentTypeId,AcctNumber,Active) VALUES (2,2,'1234 5678 9012',1);
-INSERT INTO UserPaymentType(CustomerId,PaymentTypeId,AcctNumber,Active) VALUES (1,2,'1234 56789 0123',1);
-INSERT INTO UserPaymentType(CustomerId,PaymentTypeId,AcctNumber,Active) VALUES (4,1,'1234 56789 0123',1);
+INSERT INTO UserPaymentType(CustomerId,PaymentTypeId,AcctNumber,Active) VALUES (1,2,'1234 56789 4123',1);
+INSERT INTO UserPaymentType(CustomerId,PaymentTypeId,AcctNumber,Active) VALUES (4,1,'1234 56789 5123',1);
+INSERT INTO UserPaymentType(CustomerId,PaymentTypeId,AcctNumber,Active) VALUES (4,3,'1234 56789 5163',1);
+INSERT INTO UserPaymentType(CustomerId,PaymentTypeId,AcctNumber,Active) VALUES (3,1,'1234 56789 5123',1);
+INSERT INTO UserPaymentType(CustomerId,PaymentTypeId,AcctNumber,Active) VALUES (5,1,'1234 56789 6123',1);
+INSERT INTO UserPaymentType(CustomerId,PaymentTypeId,AcctNumber,Active) VALUES (6,3,'1234 56789 7123',1);
+INSERT INTO UserPaymentType(CustomerId,PaymentTypeId,AcctNumber,Active) VALUES (7,2,'1234 56789 8123',1);
+INSERT INTO UserPaymentType(CustomerId,PaymentTypeId,AcctNumber,Active) VALUES (8,1,'1234 56789 9123',1);
+INSERT INTO UserPaymentType(CustomerId,PaymentTypeId,AcctNumber,Active) VALUES (9,2,'1234 56789 0123',1);
+INSERT INTO UserPaymentType(CustomerId,PaymentTypeId,AcctNumber,Active) VALUES (10,1,'1234 56789 2223',1);
 
 INSERT INTO [Order](CustomerId,UserPaymentTypeId) VALUES (1,NULL);
 INSERT INTO [Order](CustomerId,UserPaymentTypeId) VALUES (2,2);
