@@ -16,7 +16,7 @@ Your team has been assigned to build out a .NET Web API that makes each resource
 1. Training programs
 1. Departments
 
-> **Pro tip:** You do not need to make a Controller for the join tables (i.e. EmployeeTrainingProgram), because those aren't resources.
+> **Pro tip:** You do not need to make a Controller for the join tables (i.e. EmployeeTraining), because those aren't resources.
 
 The front end team has been given a prototype API to help them implement a React web application. The prototype is built similar to JSON Server and not a actual long-term solution for persisting and retrieving data. We need your team to build a production ready API to replace the prototype.
 
