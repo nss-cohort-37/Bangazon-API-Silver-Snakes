@@ -31,7 +31,7 @@ namespace BangazonAPI.Controllers
         //Get All
         [HttpGet]
 
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] string q, [FromQuery] string OrderBy)
         {
             using (SqlConnection conn = Connection)
             {
@@ -39,7 +39,31 @@ namespace BangazonAPI.Controllers
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"SELECT Id, DateAdded, ProductTypeId, CustomerId, Price, Title, Description
-                        FROM Product";
+                        FROM Product
+                        WHERE 1 = 1";
+
+                    if (q != null)
+                    {
+                        cmd.CommandText += " AND Title LIKE @title OR Description LIKE @description";
+                        cmd.Parameters.Add(new SqlParameter("@Title", "%" + q + "%"));
+                        cmd.Parameters.Add(new SqlParameter("@Description", "%" + q + "%"));
+                    }
+                    if (OrderBy == "recent")
+                    {
+                        cmd.CommandText = @"SELECT Id, DateAdded, ProductTypeId, CustomerId, Price, Title, Description
+                        FROM Product
+                        WHERE 1 = 1
+                        ORDER BY DateAdded DESC";
+                    }
+                    if (OrderBy == "popularity")
+                    {
+                        cmd.CommandText = @"SELECT p.Id, p.DateAdded, p.ProductTypeId, p.CustomerId, p.Price, p.Title, p.[Description], Count(p.Id) AS Count
+                            FROM Product p
+                            LEFT JOIN OrderProduct op
+                            ON op.ProductId = p.Id
+                            GROUP By p.Id, p.DateAdded, p.ProductTypeId, p.CustomerId, p.Price, p.Title, p.[Description]
+                            ORDER By Count Desc";
+                    }
                     SqlDataReader reader = cmd.ExecuteReader();
                     List<Product> products = new List<Product>();
 
