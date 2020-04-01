@@ -123,8 +123,8 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        //Update a paymentType
-        [HttpPut("{id}")]
+        //Soft "Delete" a paymentType
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] PaymentType paymentType)
         {
             try
@@ -164,42 +164,6 @@ namespace BangazonAPI.Controllers
             }
         }
 
-
-        //Delete a paymentType
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
-        {
-            try
-            {
-                using (SqlConnection conn = Connection)
-                {
-                    conn.Open();
-                    using (SqlCommand cmd = conn.CreateCommand())
-                    {
-                        cmd.CommandText = @"DELETE FROM PaymentType WHERE Id = @id";
-                        cmd.Parameters.Add(new SqlParameter("@id", id));
-
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                        if (rowsAffected > 0)
-                        {
-                            return new StatusCodeResult(StatusCodes.Status204NoContent);
-                        }
-                        throw new Exception("No rows affected");
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                if (!PaymentTypeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
 
         private bool PaymentTypeExists(int id)
         {
