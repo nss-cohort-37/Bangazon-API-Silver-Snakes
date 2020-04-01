@@ -70,7 +70,7 @@ namespace BangazonAPI.Controllers
 
 
         [HttpGet("{id}", Name = "GetCustomer")]
-        public async Task<IActionResult> Get([FromRoute] int id)
+        public async Task<IActionResult> Get([FromRoute] int id, [FromQuery] string include)
         {
             using (SqlConnection conn = Connection)
             {
@@ -78,7 +78,9 @@ namespace BangazonAPI.Controllers
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        select SELECT c.Id, c.FirstName, c.LastName,  c.CreatedDate, c.Active, c.Address, c.City, c.State, c.Email, Phone FROM Customer c left join Product p on p.customerId = p.id where c.id = @id";
+                        SELECT c.Id, c.FirstName, c.LastName,  c.CreatedDate, c.Active, c.Address, c.City,
+                        c.State, c.Email, c.Phone, p.Id as ProductId, p.DateAdded, p.ProductTypeId, p.CustomerId, p.Price, p.Title, p.Description
+                        FROM Customer c left join Product p on p.customerId = p.id where c.id = @id";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -90,20 +92,41 @@ namespace BangazonAPI.Controllers
                        {
                             customer = new Customer
                             {
-                                
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                CreatedDate = reader.GetDateTime(reader.GetOrdinal("CreatedDate")),
+                                Active = reader.GetBoolean(reader.GetOrdinal("Active")),
+                                Address = reader.GetString(reader.GetOrdinal("Address")),
+                                City = reader.GetString(reader.GetOrdinal("City")),
+                                State = reader.GetString(reader.GetOrdinal("State")),
+                                Email = reader.GetString(reader.GetOrdinal("Email")),
+                                Phone = reader.GetString(reader.GetOrdinal("Phone")),
+                                Products = new List<Product>()
 
                             };
 
 
+                            if (include == "products")
+                            {
+                                customer.Products.Add(new Product
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("ProductId")),
+                                    DateAdded = reader.GetDateTime(reader.GetOrdinal("DateAdded")),
+                                    ProductTypeId = reader.GetInt32(reader.GetOrdinal("ProductTypeId")),
+                                    CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
+                                    Price = reader.GetDecimal(reader.GetOrdinal("Price")),
+                                    Title = reader.GetString(reader.GetOrdinal("Title")),
+                                    Description = reader.GetString(reader.GetOrdinal("Description")),
+
+                                });
+                            }
+
+                            
 
                         }
 
-                        customer.Doggos.Add(new Dog()
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("DogId")),
-                            Name = reader.GetString(reader.GetOrdinal("dogName")),
-                            Breed = reader.GetString(reader.GetOrdinal("Breed"))
-                        });
+                        
 
 
                     }
@@ -146,7 +169,58 @@ namespace BangazonAPI.Controllers
         }
 
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Customer customer)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE Customer
+                                            SET FirstName = @FirstName,
+                                                LastName = @LastName,  
+                                                Active = @Active, 
+                                                Address = @Address,
+                                                City = @City, 
+                                                State = @State, 
+                                                Email = @Email, 
+                                                Phone = @Phone
+                                            WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@Id", customer.Id));
+                        cmd.Parameters.Add(new SqlParameter("@FirstName", customer.FirstName));
+                        cmd.Parameters.Add(new SqlParameter("@LastName", customer.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@CreatedDate", customer.CreatedDate));
+                        cmd.Parameters.Add(new SqlParameter("@Active", customer.Active));
+                        cmd.Parameters.Add(new SqlParameter("@Address", customer.Address));
+                        cmd.Parameters.Add(new SqlParameter("@City", customer.City));
+                        cmd.Parameters.Add(new SqlParameter("@State", customer.State));
+                        cmd.Parameters.Add(new SqlParameter("@Email", customer.Email));
+                        cmd.Parameters.Add(new SqlParameter("@Phone", customer.Phone));
 
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            return new StatusCodeResult(StatusCodes.Status204NoContent);
+                        }
+                        throw new Exception("No rows affected");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                if (!CustomerExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
 
 
 
