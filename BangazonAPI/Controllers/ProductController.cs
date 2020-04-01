@@ -67,6 +67,46 @@ namespace BangazonAPI.Controllers
             }
         }
 
+
+        //GET BY ID
+        [HttpGet("{id}", Name = "GetProduct")]
+        public async Task<IActionResult> Get([FromRoute] int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"Select p.Id, p.DateAdded, p.ProductTypeId, p.CustomerId, p.Price, p.Title, p.Description
+                        FROM Product p
+                        WHERE p.Id = @id";
+
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    Product product = null;
+
+                    if (reader.Read())
+                    {
+                        product = new Product
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            DateAdded = reader.GetDateTime(reader.GetOrdinal("DateAdded")),
+                            ProductTypeId = reader.GetInt32(reader.GetOrdinal("ProductTypeId")),
+                            CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
+                            Price = reader.GetDecimal(reader.GetOrdinal("Price")),
+                            Title = reader.GetString(reader.GetOrdinal("Title")),
+                            Description = reader.GetString(reader.GetOrdinal("Description")),
+                           
+                        };
+                    }
+                    reader.Close();
+
+                    return Ok(product);
+                }
+            }
+        }
+
         //POST
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Product product)
@@ -91,5 +131,113 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
+
+        // Put
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Product product)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE Product
+                                            SET DateAdded = @dateAdded,
+                                            ProductTypeId = @productTypeId,
+                                            CustomerId = @customerId,
+                                            Price = @price,
+                                            Title = @title,
+                                            Description = @description
+                                            WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@dateAdded", product.DateAdded));
+                        cmd.Parameters.Add(new SqlParameter("@productTypeId", product.ProductTypeId));
+                        cmd.Parameters.Add(new SqlParameter("@customerId", product.CustomerId));
+                        cmd.Parameters.Add(new SqlParameter("@price", product.Price));
+                        cmd.Parameters.Add(new SqlParameter("@title", product.Title));
+                        cmd.Parameters.Add(new SqlParameter("@description", product.Description));
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            return new StatusCodeResult(StatusCodes.Status204NoContent);
+                        }
+                        throw new Exception("No rows affected");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                if (!ProductExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        //Delete
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"DELETE FROM Product WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            return new StatusCodeResult(StatusCodes.Status204NoContent);
+                        }
+                        throw new Exception("No rows affected");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                if (!ProductExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+
+
+        //Check method
+        private bool ProductExists(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT Id, DateAdded, ProductTypeId, CustomerId, Price, Title, Description
+                        FROM Product
+                        WHERE Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    return reader.Read();
+                }
+            }
+        }
+
     }
 }
