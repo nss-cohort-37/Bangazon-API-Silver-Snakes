@@ -146,14 +146,12 @@ namespace BangazonAPI.Controllers
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
                         cmd.CommandText = @"UPDATE Product
-                                            SET DateAdded = @dateAdded,
-                                            ProductTypeId = @productTypeId,
+                                            SET ProductTypeId = @productTypeId,
                                             CustomerId = @customerId,
                                             Price = @price,
                                             Title = @title,
                                             Description = @description
                                             WHERE Id = @id";
-                        cmd.Parameters.Add(new SqlParameter("@dateAdded", product.DateAdded));
                         cmd.Parameters.Add(new SqlParameter("@productTypeId", product.ProductTypeId));
                         cmd.Parameters.Add(new SqlParameter("@customerId", product.CustomerId));
                         cmd.Parameters.Add(new SqlParameter("@price", product.Price));
