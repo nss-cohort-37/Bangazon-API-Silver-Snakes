@@ -29,7 +29,7 @@ namespace BangazonAPI.Controllers
                 return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             }
         }
-
+        [HttpGet]
         public async Task<IActionResult> Get()
         {
             using (SqlConnection conn = Connection)
@@ -63,6 +63,74 @@ namespace BangazonAPI.Controllers
                     reader.Close();
 
                     return Ok(customers);
+                }
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] Customer customer)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"INSERT INTO Customer (Id, FirstName, LastName,  CreatedDate, Active, Address, City, State, Email, Phone)
+                                        OUTPUT INSERTED.Id
+                                        VALUES (@Name, @NeighborhoodId)";
+                    cmd.Parameters.Add(new SqlParameter("@FirstName", customer.FirstName));
+                    cmd.Parameters.Add(new SqlParameter("@LastName", customer.LastName));
+                    cmd.Parameters.Add(new SqlParameter("@CreatedDate", customer.FirstName));
+                    cmd.Parameters.Add(new SqlParameter("@Active", customer.Active));
+                    cmd.Parameters.Add(new SqlParameter("@Address", customer.Address));
+                    cmd.Parameters.Add(new SqlParameter("@City", customer.City));
+                    cmd.Parameters.Add(new SqlParameter("@State", customer.State));
+                    cmd.Parameters.Add(new SqlParameter("@Email", customer.Email));
+                    cmd.Parameters.Add(new SqlParameter("@Phone", customer.Phone));
+
+
+
+                    int newId = (int)cmd.ExecuteScalar();
+                    customer.Id = newId;
+                    return CreatedAtRoute("GetCustomer", new { id = newId }, customer);
+                }
+            }
+        }
+
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"DELETE FROM Customer WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            return new StatusCodeResult(StatusCodes.Status204NoContent);
+                        }
+                        throw new Exception("No rows affected");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                if (!CustomerExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
                 }
             }
         }
