@@ -167,3 +167,189 @@ You will be using the [Official Bangazon SQL](./Bangazon.sql) file to create you
 ## Controllers
 
 Now it's time to build the controllers that handle GET, POST, PUT, and DELETE operations on each resource. Make sure you read, and understand, the requirements in the issue tickets.
+
+## JSON Examples
+
+### Customer
+
+```js
+{
+    "id": 1575559407787,
+    "active": true,
+    "createdDate": "2019-08-25T00:00:00.000Z",
+    "firstName": "Nathanael",
+    "lastName": "Laverenz",
+    "address": "401 Nunya Business Dr",
+    "city": "Herman",
+    "state": "New York",
+    "email": "n.lav@sbcglobal.net",
+    "phone": "6151237584"
+}
+```
+
+### Customer w/ Products
+
+```js
+{
+    "id": 1575559407733,
+    "active": true,
+    "createdDate": "2019-08-25T00:00:00.000Z",
+    "firstName": "Kimble",
+    "lastName": "Peskett",
+    "address": "508 Loop Cir",
+    "city": "Nashville",
+    "state": "Tennessee",
+    "email": "peskykimble@hotmail.com",
+    "phone": "5671234567",
+    "products": [
+        {
+            "id": 15755594079866,
+            "productTypeId": 1575501970047,
+            "customerId": 1575559407733,
+            "price": 76.91,
+            "description": "morbi ut odio cras mi pede malesuada in imperdiet et commodo",
+            "title": "Passat",
+            "dateAdded": "2019-08-25T00:00:00.000Z"
+        },
+        {
+            "productTypeId": 1575559407749,
+            "customerId": 1575559407733,
+            "price": 79.92,
+            "description": "semper rutrum nulla nunc purus phasellus in felis donec semper sapien a libero",
+            "title": "Santa Fe",
+            "dateAdded": "2019-09-25T00:00:00.000Z",
+            "id": 1575669305071
+        }
+    ]
+}
+```
+
+### Product
+
+```js
+{
+    "id": 15755594079867,
+    "productTypeId": 1575501970045,
+    "customerId": 1575559407755,
+    "price": 62.54,
+    "description": "pede ullamcorper augue a suscipit nulla elit ac nulla sed",
+    "title": "Murciélago LP640",
+    "dateAdded": "2018-12-25T00:00:00.000Z"
+}
+```
+
+### PaymentType
+
+```js
+{
+    "id": 1575501974871,
+    "name": "Mastercard",
+    "active": true
+}
+```
+
+### UserPaymentType
+
+```js
+{
+    "id": 1575501978463,
+    "customerId": 1575559407787,
+    "paymentTypeId": 1575501974871,
+    "acctNumber": "2234 56789 0123",
+    "active": true
+}
+```
+
+### Order
+
+```js
+{
+    "id": 1575559407665,
+    "customerId": 1575559407787,
+    "userPaymentId": null
+}
+```
+
+### CustomerProduct
+
+```js
+{
+    "customerId": 1575559407787,
+    "productId": 1575501970208
+}
+```
+
+### ProductType
+
+```js
+{
+    "id": 1575501970045,
+    "name": "Accessories"
+}
+```
+
+### Employee
+
+```js
+{
+    "id": 1575501974624,
+    "firstName": "Adam",
+    "lastName": "Sheaffer",
+    "departmentId": 1575559403192,
+    "isSupervisor": false,
+    "computerId": 1575566566333,
+    "email": "iamtheboss@bangazon.com",
+    "computer": {
+        "id": 1575566566333,
+        "purchaseDate": "2016-01-01T23:28:56.782Z",
+        "decomissionDate": null,
+        "make": "Apple",
+        "model": "Macbook Pro"
+    }
+}
+```
+
+### Department
+
+```js
+{
+    "id": 1575559403194,
+    "name": "Accounting",
+    "budget": 1230000
+}
+```
+
+### Computers
+
+```js
+{
+    "id": 1575566566333,
+    "purchaseDate": "2016-01-01T23:28:56.782Z",
+    "decomissionDate": null,
+    "make": "Apple",
+    "model": "Macbook Pro"
+}
+```
+
+### TrainingProgram
+
+```js
+{
+    "id": 1575559403194,
+    "name": "GIS Application",
+    "startDate": "2018-09-25T00:00:00.000Z",
+    "endDate": "2018-10-05T00:00:00.000Z",
+    "maxAttendees": 45
+}
+```
+
+### RevenueReport
+
+```js
+{
+    "productTypeId": 1575501970829,
+    "productType": "Filters",
+    "totalRevenue": 158.64
+}
+```
+
