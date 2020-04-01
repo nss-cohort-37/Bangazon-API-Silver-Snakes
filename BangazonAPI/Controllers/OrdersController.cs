@@ -30,6 +30,115 @@ namespace BangazonAPI.Controllers
         }
 
         [HttpGet]
-        public
+        public async Task<IActionResult> GetOrdersByCustomerId([FromQuery] Int32 customerId)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT Id, CustomerId, UserPaymentTypeId 
+                                        FROM Order 
+                                        WHERE CustomerId = @customerId";
+                    cmd.Parameters.Add(new SqlParameter("@customerId", customerId));
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    List<Order> orders = new List<Order>();
+
+                    while (reader.Read())
+                    {
+                        Order order = new Order()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId"))
+                        };
+                        if (!reader.IsDBNull(reader.GetOrdinal("UserPaymentTypeId")))
+                        {
+                            order.UserPaymentTypeId = reader.GetInt32(reader.GetOrdinal("UserPaymentTypeId"));
+                        }
+                        orders.Add(order);
+                    }
+                    reader.Close();
+
+                    return Ok(orders);
+                }
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrderById([FromRoute] int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT Id, CustomerId, UserPaymentTypeId 
+                                        FROM Order 
+                                        WHERE Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    Order order = null;
+
+                    if (reader.Read())
+                    {
+                        order = new Order()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId"))
+                        };
+                        if (!reader.IsDBNull(reader.GetOrdinal("UserPaymentTypeId")))
+                        {
+                            order.UserPaymentTypeId = reader.GetInt32(reader.GetOrdinal("UserPaymentTypeId"));
+                        }
+                    }
+                    reader.Close();
+
+                    return Ok(order);
+                }
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCustomersShoppingCart(
+            [FromQuery] Int32 customerId,
+            [FromQuery] bool cart)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT Id, CustomerId, UserPaymentTypeId 
+                                        FROM Order 
+                                        WHERE CustomerId = @customerId";
+                    cmd.Parameters.Add(new SqlParameter("@customerId", customerId));
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    List<Order> orders = new List<Order>();
+
+                    while (reader.Read())
+                    {
+                        Order order = new Order()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId"))
+                        };
+                        if (!reader.IsDBNull(reader.GetOrdinal("UserPaymentTypeId")))
+                        {
+                            order.UserPaymentTypeId = reader.GetInt32(reader.GetOrdinal("UserPaymentTypeId"));
+                        }
+                        orders.Add(order);
+                    }
+                    reader.Close();
+
+                    return Ok(orders);
+                }
+            }
+        }
     }
 }
