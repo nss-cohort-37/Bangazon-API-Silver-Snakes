@@ -68,6 +68,53 @@ namespace BangazonAPI.Controllers
         }
 
 
+
+        [HttpGet("{id}", Name = "GetCustomer")]
+        public async Task<IActionResult> Get([FromRoute] int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        select SELECT c.Id, c.FirstName, c.LastName,  c.CreatedDate, c.Active, c.Address, c.City, c.State, c.Email, Phone FROM Customer c left join Product p on p.customerId = p.id where c.id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    Customer customer = null;
+
+                    while (reader.Read())
+                    {
+                        if (customer == null)
+                       {
+                            customer = new Customer
+                            {
+                                
+
+                            };
+
+
+
+                        }
+
+                        customer.Doggos.Add(new Dog()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("DogId")),
+                            Name = reader.GetString(reader.GetOrdinal("dogName")),
+                            Breed = reader.GetString(reader.GetOrdinal("Breed"))
+                        });
+
+
+                    }
+                    reader.Close();
+
+                    return Ok(customer);
+                }
+            }
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Customer customer)
         {
@@ -76,12 +123,12 @@ namespace BangazonAPI.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"INSERT INTO Customer (Id, FirstName, LastName,  CreatedDate, Active, Address, City, State, Email, Phone)
+                    cmd.CommandText = @"INSERT INTO Customer (FirstName, LastName,  CreatedDate, Active, Address, City, State, Email, Phone)
                                         OUTPUT INSERTED.Id
-                                        VALUES (@Name, @NeighborhoodId)";
+                                        VALUES (@FirstName, @LastName, @CreatedDate, @Active, @Address, @City, @State, @Email, @Phone )";
                     cmd.Parameters.Add(new SqlParameter("@FirstName", customer.FirstName));
                     cmd.Parameters.Add(new SqlParameter("@LastName", customer.LastName));
-                    cmd.Parameters.Add(new SqlParameter("@CreatedDate", customer.FirstName));
+                    cmd.Parameters.Add(new SqlParameter("@CreatedDate", customer.CreatedDate));
                     cmd.Parameters.Add(new SqlParameter("@Active", customer.Active));
                     cmd.Parameters.Add(new SqlParameter("@Address", customer.Address));
                     cmd.Parameters.Add(new SqlParameter("@City", customer.City));
@@ -97,6 +144,11 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
+
+
+
+
+
 
 
 
