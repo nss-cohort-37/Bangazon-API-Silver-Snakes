@@ -41,25 +41,30 @@ namespace BangazonAPI.Controllers
                     cmd.CommandText = @"SELECT Id, DateAdded, ProductTypeId, CustomerId, Price, Title, Description
                         FROM Product";
                     SqlDataReader reader = cmd.ExecuteReader();
-                    Product product = new Product();
+                    List<Product> products = new List<Product>();
 
                     while (reader.Read())
                     {
-                        product = new Product
+                       Product product = new Product
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             DateAdded = reader.GetDateTime(reader.GetOrdinal("DateAdded")),
                             ProductTypeId = reader.GetInt32(reader.GetOrdinal("ProductTypeId")),
                             CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
-                            Price = reader.GetDouble(reader.GetOrdinal("Price")),
+                            Price = reader.GetDecimal(reader.GetOrdinal("Price")),
                             Title = reader.GetString(reader.GetOrdinal("Title")),
                             Description = reader.GetString(reader.GetOrdinal("Description")),
                         };
 
-                        
+                        products.Add(product);
+
                     }
+                    reader.Close();
+
+                    return Ok(products);
                 }
 
             }
+        }
     }
 }
