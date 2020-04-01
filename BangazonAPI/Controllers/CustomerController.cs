@@ -227,7 +227,7 @@ namespace BangazonAPI.Controllers
 
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        public async Task<IActionResult> Delete([FromRoute] int id, [FromBody] Customer customer)
         {
             try
             {
@@ -236,9 +236,11 @@ namespace BangazonAPI.Controllers
                     conn.Open();
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
-                        cmd.CommandText = @"DELETE FROM Customer WHERE Id = @id";
+                        cmd.CommandText = @"Update Customer
+                        set Active = @active                        
+                        WHERE Id = @id";
                         cmd.Parameters.Add(new SqlParameter("@id", id));
-
+                        cmd.Parameters.Add(new SqlParameter("@Active", customer.Active));
                         int rowsAffected = cmd.ExecuteNonQuery();
                         if (rowsAffected > 0)
                         {
