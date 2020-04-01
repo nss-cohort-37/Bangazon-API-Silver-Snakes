@@ -50,8 +50,10 @@ namespace BangazonAPI.Controllers
                             Name = reader.GetString(reader.GetOrdinal("Name")),
                             Active = reader.GetBoolean(reader.GetOrdinal("Active"))
                         };
-
-                        paymentTypes.Add(paymentType);
+                        if (paymentType.Active == true)
+                        {
+                            paymentTypes.Add(paymentType);
+                        }
                     }
                     reader.Close();
 
