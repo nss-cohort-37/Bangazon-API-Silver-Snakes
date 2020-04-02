@@ -126,7 +126,7 @@ namespace BangazonAPI.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"INSERT INTO Customer (Name)
+                    cmd.CommandText = @"INSERT INTO ProductType (Name)
                                         OUTPUT INSERTED.Id
                                         VALUES (@Name)";
 
@@ -155,8 +155,8 @@ namespace BangazonAPI.Controllers
                     conn.Open();
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
-                        cmd.CommandText = @"UPDATE Customer
-                                            SET Name = @Name,                                                
+                        cmd.CommandText = @"UPDATE ProductType
+                                            SET Name = @Name                                                
                                             WHERE Id = @id";
                         cmd.Parameters.Add(new SqlParameter("@Id", productType.Id));
                         cmd.Parameters.Add(new SqlParameter("@Name", productType.Name));
