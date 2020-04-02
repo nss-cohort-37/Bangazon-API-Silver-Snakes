@@ -44,6 +44,7 @@ namespace BangazonAPI.Controllers
                     while (reader.Read())
                     {
                         Computer computer = null;
+                        
 
                         if (!reader.IsDBNull(reader.GetOrdinal("DecomissionDate")))
                         {
@@ -75,6 +76,46 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
+
+        ////Get available computers
+        //[HttpGet("{decomissionDate}", Name = "GetAvailableComputers")]
+        //public async Task<IActionResult> Get([FromRoute] DateTime decomissionDate)
+        //{
+        //    using (SqlConnection conn = Connection)
+        //    {
+        //        conn.Open();
+        //        using (SqlCommand cmd = conn.CreateCommand())
+        //        {
+        //            cmd.CommandText = @"SELECT Id, PurchaseDate, DecomissionDate, Make, Model 
+        //                                FROM Computer 
+        //                                ";
+        //            SqlDataReader reader = cmd.ExecuteReader();
+        //            List<Computer> computers = new List<Computer>();
+
+        //            while (reader.Read())
+        //            {
+        //                Computer computer = null;
+
+        //                if (!reader.IsDBNull(reader.GetOrdinal("DecomissionDate")))
+        //                {
+        //                    computer = new Computer
+        //                    {
+        //                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+        //                        PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
+        //                        DecomissionDate = reader.GetDateTime(reader.GetOrdinal("DecomissionDate")),
+        //                        Make = reader.GetString(reader.GetOrdinal("Make")),
+        //                        Model = reader.GetString(reader.GetOrdinal("Model"))
+        //                    };
+        //                    computers.Add(computer);
+        //                }
+
+        //            }
+        //            reader.Close();
+
+        //            return Ok(computers);
+        //        }
+        //    }
+        //}
 
 
         //Get a single computer by Id
@@ -133,7 +174,7 @@ namespace BangazonAPI.Controllers
         }
 
 
-        ////Create a new computer
+        //Add a new computer
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Computer computer)
         {
@@ -160,7 +201,7 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        //Update a computer
+        //Update a computer record
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Computer computer)
         {
@@ -205,6 +246,8 @@ namespace BangazonAPI.Controllers
                 }
         }
 
+
+        //Delete a computer record
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
