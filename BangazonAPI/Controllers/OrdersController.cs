@@ -58,7 +58,7 @@ namespace BangazonAPI.Controllers
                         {
                             if (reader.IsDBNull(reader.GetOrdinal("UserPaymentTypeId")))
                             {
-                            
+
                                 if (order == null)
                                 {
                                     order = new Order()
@@ -68,7 +68,7 @@ namespace BangazonAPI.Controllers
                                         Products = new List<Product>()
                                     };
                                 }
-                            
+
                                 order.Products.Add(new Product()
                                 {
                                     Id = reader.GetInt32(reader.GetOrdinal("ProductId")),
@@ -82,11 +82,11 @@ namespace BangazonAPI.Controllers
                             }
                         }
                         reader.Close();
-                        
+
                         return Ok(order);
-                    } 
-                    else 
-                    { 
+                    }
+                    else
+                    {
                         cmd.CommandText = @"SELECT o.Id, o.CustomerId, o.UserPaymentTypeId, 
                                                 op.Id, op.OrderId, op.ProductId, 
                                                 p.Id, p.DateAdded, p.ProductTypeId, p.CustomerId, p.Price, p.Title, p.Description
@@ -117,7 +117,7 @@ namespace BangazonAPI.Controllers
                                 {
                                     order.UserPaymentTypeId = reader.GetInt32(reader.GetOrdinal("UserPaymentTypeId"));
                                 }
-                           
+
                                 order.Products.Add(new Product()
                                 {
                                     Id = reader.GetInt32(reader.GetOrdinal("ProductId")),
@@ -151,7 +151,7 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
-        
+
         [HttpGet("{id}", Name = "GetOrder")]
         public async Task<IActionResult> GetOrderById([FromRoute] int id)
         {
@@ -212,7 +212,7 @@ namespace BangazonAPI.Controllers
         {
             int orderId = 0;
 
-            // 1. Find the customer's shopping if there is one.
+            // 1. Find the customer's shopping cart if there is one.
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
@@ -261,13 +261,133 @@ namespace BangazonAPI.Controllers
                                         VALUES (@orderId, @productId)";
                     cmd.Parameters.Add(new SqlParameter("@orderId", orderId));
                     cmd.Parameters.Add(new SqlParameter("@productId", custProd.ProductId));
-                    
+
                     cmd.ExecuteNonQuery();
                     return Ok(new Order()
                     {
                         Id = orderId,
                         CustomerId = custProd.CustomerId
                     });
+                }
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Order order)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE [Order]
+                                            SET CustomerId = @customerId,
+                                            UserPaymentTypeId = @userPaymentTypeId
+                                            WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@customerId", order.CustomerId));
+                        cmd.Parameters.Add(new SqlParameter("@userPaymentTypeId", order.UserPaymentTypeId));
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            return new StatusCodeResult(StatusCodes.Status204NoContent);
+                        }
+                        throw new Exception("No rows affected");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                if (!OrderExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        [HttpDelete("{orderId}/products{productId}")]
+        public async Task<IActionResult> Delete(
+            [FromRoute] int orderId,
+            [FromRoute] int productId
+            )
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"SELECT Id, CustomerId, UserPaymentTypeId
+                                        FROM [Order]
+                                        WHERE Id = @orderId AND UserPaymentTypeId IS NULL";
+                        cmd.Parameters.Add(new SqlParameter("@orderId", orderId));
+
+                        SqlDataReader reader = cmd.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            using (SqlConnection connection = Connection)
+                            {
+                                connection.Open();
+                                using (SqlCommand command = connection.CreateCommand())
+                                {
+                                    command.CommandText = @"DELETE FROM OrderProduct WHERE OrderId = @orderId AND ProductId = @productId";
+                                    command.Parameters.Add(new SqlParameter("@orderId", orderId));
+                                    command.Parameters.Add(new SqlParameter("@productId", productId));
+
+                                    int rowsAffected = command.ExecuteNonQuery();
+                                    if (rowsAffected > 0)
+                                    {
+                                        return new StatusCodeResult(StatusCodes.Status204NoContent);
+                                    }
+                                    throw new Exception("No rows affected");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("No rows affected");
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                if (!OrderExists(orderId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+
+        private bool OrderExists(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT Id, CustomerId
+                        FROM [Order]
+                        WHERE Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    return reader.Read();
                 }
             }
         }
