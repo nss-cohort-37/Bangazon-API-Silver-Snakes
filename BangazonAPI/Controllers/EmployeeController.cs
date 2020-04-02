@@ -63,5 +63,54 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
+
+
+        //GET BY ID
+        [HttpGet("{id}", Name = "GetEmployee")]
+        public async Task<IActionResult> Get([FromRoute] int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"Select e.Id, e.FirstName, e.LastName, e.DepartmentId, e.IsSupervisor, e.ComputerId, c.Id AS CompId, c.PurchaseDate, c.DecomissionDate, c.Make, c.Model
+                        FROM Employee e
+                        LEFT JOIN Computer c
+                        ON e.ComputerId = c.Id
+                        WHERE e.Id = @id";
+
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    Employee employee = null;
+
+                    if (reader.Read())
+                    {
+                        employee = new Employee
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                            DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId")),
+                            IsSupervisor = reader.GetBoolean(reader.GetOrdinal("IsSupervisor")),
+                            ComputerId = reader.GetInt32(reader.GetOrdinal("ComputerId")),
+                            Computer = new Computer()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("CompId")),
+                                PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
+                                DecomissionDate = reader.GetDateTime(reader.GetOrdinal("DecomissionDate")),
+                                Make = reader.GetString(reader.GetOrdinal("Make")),
+                                Model = reader.GetString(reader.GetOrdinal("Model"))
+                            },
+                            Email = reader.GetString(reader.GetOrdinal("Email")),
+                        };
+                    }
+                    reader.Close();
+
+                    return Ok(employee);
+                }
+            }
+        }
     }
 }
