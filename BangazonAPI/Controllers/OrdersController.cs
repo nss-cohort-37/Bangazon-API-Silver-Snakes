@@ -352,10 +352,7 @@ namespace BangazonAPI.Controllers
                                 }
                             }
                         }
-                        else
-                        {
-                            throw new Exception("No rows affected");
-                        }
+                        return new StatusCodeResult(StatusCodes.Status304NotModified);
                     }
                 }
             }
