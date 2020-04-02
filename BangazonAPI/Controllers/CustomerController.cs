@@ -58,6 +58,8 @@ namespace BangazonAPI.Controllers
 
                         };
 
+                        
+
                         customers.Add(customer);
                     }
                     reader.Close();
