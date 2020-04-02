@@ -115,5 +115,25 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
+
+        //Check method
+        private bool EmployeeExists(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT Id, FirstName, LastName,  DepartmentId, IsSupervisor, ComputerId, Email
+                        FROM Employee
+                        WHERE Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    return reader.Read();
+                }
+            }
+        }
     }
 }
