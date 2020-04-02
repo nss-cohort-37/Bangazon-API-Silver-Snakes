@@ -77,11 +77,12 @@ namespace BangazonAPI.Controllers
                                     CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
                                     Price = reader.GetDecimal(reader.GetOrdinal("Price")),
                                     Title = reader.GetString(reader.GetOrdinal("Title")),
-                                    Description = reader.GetString(reader.GetOrdinal("Description")),
+                                    Description = reader.GetString(reader.GetOrdinal("Description"))
                                 });
                             }
                         }
                         reader.Close();
+                        
                         return Ok(order);
                     } 
                     else 
@@ -125,7 +126,7 @@ namespace BangazonAPI.Controllers
                                     CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
                                     Price = reader.GetDecimal(reader.GetOrdinal("Price")),
                                     Title = reader.GetString(reader.GetOrdinal("Title")),
-                                    Description = reader.GetString(reader.GetOrdinal("Description")),
+                                    Description = reader.GetString(reader.GetOrdinal("Description"))
                                 });
                                 orders.Add(order);
                             }
@@ -139,11 +140,10 @@ namespace BangazonAPI.Controllers
                                     CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
                                     Price = reader.GetDecimal(reader.GetOrdinal("Price")),
                                     Title = reader.GetString(reader.GetOrdinal("Title")),
-                                    Description = reader.GetString(reader.GetOrdinal("Description")),
+                                    Description = reader.GetString(reader.GetOrdinal("Description"))
                                 });
                             }
                         }
-
                         reader.Close();
 
                         return Ok(orders);
@@ -197,12 +197,77 @@ namespace BangazonAPI.Controllers
                             CustomerId = reader.GetInt32(reader.GetOrdinal("CustomerId")),
                             Price = reader.GetDecimal(reader.GetOrdinal("Price")),
                             Title = reader.GetString(reader.GetOrdinal("Title")),
-                            Description = reader.GetString(reader.GetOrdinal("Description")),
+                            Description = reader.GetString(reader.GetOrdinal("Description"))
                         });
                     }
                     reader.Close();
 
                     return Ok(order);
+                }
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] CustomerProduct custProd)
+        {
+            int orderId = 0;
+
+            // 1. Find the customer's shopping if there is one.
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT Id, CustomerId, UserPaymentTypeId
+                                        FROM [Order]
+                                        WHERE CustomerId = @customerId AND UserPaymentTypeId IS NULL";
+                    cmd.Parameters.Add(new SqlParameter("@customerId", custProd.CustomerId));
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        orderId = reader.GetInt32(reader.GetOrdinal("Id"));
+                    }
+                    reader.Close();
+                }
+            }
+
+            // 2. If they don't have a shopping cart, create one.
+            if (orderId == 0)
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"INSERT INTO [Order] (CustomerId)
+                                            OUTPUT INSERTED.Id
+                                            VALUES (@customerId)";
+                        cmd.Parameters.Add(new SqlParameter("@customerId", custProd.CustomerId));
+
+                        orderId = (int)cmd.ExecuteScalar();
+                    }
+                }
+            }
+
+            // 3. Add a record to OrderProduct
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"INSERT INTO OrderProduct (OrderId, ProductId)
+                                        VALUES (@orderId, @productId)";
+                    cmd.Parameters.Add(new SqlParameter("@orderId", orderId));
+                    cmd.Parameters.Add(new SqlParameter("@productId", custProd.ProductId));
+                    
+                    cmd.ExecuteNonQuery();
+                    return Ok(new Order()
+                    {
+                        Id = orderId,
+                        CustomerId = custProd.CustomerId
+                    });
                 }
             }
         }
