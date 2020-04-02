@@ -86,10 +86,12 @@ namespace BangazonAPI.Controllers
 
                             };
 
-
+                            
                             if (include == "products")
                             {
-                                productType.Products.Add(new Product
+                                if (!reader.IsDBNull(reader.GetOrdinal("ProductId")))
+                                {
+                                  productType.Products.Add(new Product
                                 {
                                     Id = reader.GetInt32(reader.GetOrdinal("ProductId")),
                                     DateAdded = reader.GetDateTime(reader.GetOrdinal("DateAdded")),
@@ -100,6 +102,11 @@ namespace BangazonAPI.Controllers
                                     Description = reader.GetString(reader.GetOrdinal("Description")),
 
                                 });
+                                }
+                               
+
+
+                               
                             }
 
                             
