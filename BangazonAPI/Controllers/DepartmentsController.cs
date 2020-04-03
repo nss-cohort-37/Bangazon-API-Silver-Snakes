@@ -12,7 +12,7 @@ namespace BangazonAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DepartmentsController
+    public class DepartmentsController : ControllerBase
     {
         private readonly IConfiguration _config;
 
@@ -29,43 +29,37 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> Get([FromQuery] Int32? neighborhoodId)
-        //{
-        //    using (SqlConnection conn = Connection)
-        //    {
-        //        conn.Open();
-        //        using (SqlCommand cmd = conn.CreateCommand())
-        //        {
-        //            cmd.CommandText = "SELECT Id, Name, NeighborhoodId FROM Walker WHERE 1 = 1";
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Id, Name, Budget FROM Department";
 
-        //            if (neighborhoodId != null)
-        //            {
-        //                cmd.CommandText += " AND NeighborhoodId = @neighborhoodId";
-        //                cmd.Parameters.Add(new SqlParameter("@neighborhoodId", neighborhoodId));
-        //            }
+                    SqlDataReader reader = cmd.ExecuteReader();
 
-        //            SqlDataReader reader = cmd.ExecuteReader();
+                    List<Department> departments = new List<Department>();
 
-        //            List<Walker> walkers = new List<Walker>();
+                    while (reader.Read())
+                    {
+                        Department department = new Department
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            Budget = reader.GetInt32(reader.GetOrdinal("Budget"))
+                        };
 
-        //            while (reader.Read())
-        //            {
-        //                Walker walker = new Walker
-        //                {
-        //                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
-        //                    Name = reader.GetString(reader.GetOrdinal("Name")),
-        //                    NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId"))
-        //                };
+                        departments.Add(department);
+                    }
+                    reader.Close();
 
-        //                walkers.Add(walker);
-        //            }
-        //            reader.Close();
-
-        //            return Ok(walkers);
-        //        }
-        //    }
-        //}
+                    return Ok(departments);
+                }
+            }
+        }
 
         //[HttpGet("{id}", Name = "GetWalkers")]
         //public async Task<IActionResult> Get(
