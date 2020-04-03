@@ -249,7 +249,7 @@ namespace BangazonAPI.Controllers
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
                         cmd.CommandText = @"Update Customer
-                        set Active = @active                        
+                        set Active = @active                    
                         WHERE Id = @id";
                         cmd.Parameters.Add(new SqlParameter("@id", id));
                         cmd.Parameters.Add(new SqlParameter("@Active", customer.Active));
