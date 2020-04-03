@@ -233,7 +233,7 @@ namespace BangazonAPI.Controllers
 
 
         [HttpDelete("{trainingProgramId}/employees/{employeeId}")]
-        public async Task<IActionResult> Delete([FromRoute] int trainingProgramId, [FromBody] EmployeeTrainingProgram employeeTrainingProgram, [FromRoute] int employeeId)
+        public async Task<IActionResult> Delete([FromRoute] int trainingProgramId, [FromRoute] int employeeId)
         {
             try
             {
@@ -243,54 +243,30 @@ namespace BangazonAPI.Controllers
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
 
-
-                        cmd.CommandText = @"SELECT Id, EmployeeId, TrainingProgramId
-                                        FROM EmployeeTraining
-                                        WHERE EmployeeTrainingId = @trainingProgramId AND EmployeeId = @employeeId";
-                        cmd.Parameters.Add(new SqlParameter("@employeeId", employeeId));
-                        cmd.Parameters.Add(new SqlParameter("@trainingProgramId", trainingProgramId));
-
                         
 
 
-
-
-                        SqlDataReader reader = cmd.ExecuteReader();
-                        EmployeeTrainingProgram currentEmployeeTrainingProgram = new EmployeeTrainingProgram()
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            EmployeeId = reader.GetInt32(reader.GetOrdinal("EmployeeId")),
-                            TrainingProgramId = reader.GetInt32(reader.GetOrdinal("Id")),
-
-                        };
-
-
-                        using (SqlConnection connection = Connection)
-                        {
-                            connection.Open();
-                            using (SqlCommand command = connection.CreateCommand())
-                            {
-                                cmd.CommandText = @"Delete from EmployeeTraining
+                        
+                            cmd.CommandText = @"Delete from EmployeeTraining
                                            
-                                            WHERE TrainingProgramId = @trainingProgramId and EployeeId = @employeeId";
+                                            WHERE TrainingProgramId = @trainingProgramId AND EmployeeId = @employeeId";
 
-                                cmd.Parameters.Add(new SqlParameter("@id", id));
+                            cmd.Parameters.Add(new SqlParameter("@employeeId", employeeId));
+                            cmd.Parameters.Add(new SqlParameter("@trainingProgramId", trainingProgramId));
 
-                                int rowsAffected = cmd.ExecuteNonQuery();
-                                if (rowsAffected > 0)
-                                {
-                                    return new StatusCodeResult(StatusCodes.Status204NoContent);
-                                }
-                                throw new Exception("No rows affected");
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                return new StatusCodeResult(StatusCodes.Status204NoContent);
                             }
+                            throw new Exception("No rows affected");
                         }
+              
 
-
-                    }
-
-
-
+                    
                 }
+
+            
             }
 
             catch (Exception)
