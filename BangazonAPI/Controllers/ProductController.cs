@@ -31,7 +31,7 @@ namespace BangazonAPI.Controllers
         //Get All
         [HttpGet]
 
-        public async Task<IActionResult> Get([FromQuery] string q, [FromQuery] string OrderBy)
+        public async Task<IActionResult> Get([FromQuery] string q, [FromQuery] string OrderBy, [FromQuery] bool asc)
         {
             using (SqlConnection conn = Connection)
             {
@@ -63,6 +63,16 @@ namespace BangazonAPI.Controllers
                             ON op.ProductId = p.Id
                             GROUP By p.Id, p.DateAdded, p.ProductTypeId, p.CustomerId, p.Price, p.Title, p.[Description]
                             ORDER By Count Desc";
+                    }
+                    if (OrderBy == "price" &&  asc == true)
+                    {
+                        cmd.CommandText = @"SELECT Id, DateAdded, ProductTypeId, CustomerId, Price, Title, Description FROM Product
+                                            ORDER BY Price ASC";
+                    }
+                    if (OrderBy == "price" && asc == false)
+                    {
+                        cmd.CommandText = @"SELECT Id, DateAdded, ProductTypeId, CustomerId, Price, Title, Description FROM Product
+                                            ORDER BY Price DESC";
                     }
                     SqlDataReader reader = cmd.ExecuteReader();
                     List<Product> products = new List<Product>();
