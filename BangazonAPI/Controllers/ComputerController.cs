@@ -89,59 +89,6 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        //////Get unavailable computers
-        //[HttpGet]
-        
-        //public async Task<IActionResult> Get()
-        //{
-        //    using (SqlConnection conn = Connection)
-        //    {
-        //        conn.Open();
-        //        using (SqlCommand cmd = conn.CreateCommand())
-        //        {
-        //            cmd.CommandText = @"SELECT Id, PurchaseDate, DecomissionDate, Make, Model
-        //                                FROM Computer 
-        //                                WHERE DecomissionDate IS NOT NULL OR Id = ANY (SELECT ComputerId FROM Employee)
-        //                                ";
-        //            SqlDataReader reader = cmd.ExecuteReader();
-        //            List<Computer> usedComputers = new List<Computer>();
-
-        //            while (reader.Read())
-        //            {
-        //                Computer computer = null;
-
-        //                if (!reader.IsDBNull(reader.GetOrdinal("DecomissionDate")))
-        //                {
-        //                    computer = new Computer
-        //                    {
-        //                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
-        //                        PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
-        //                        DecomissionDate = reader.GetDateTime(reader.GetOrdinal("DecomissionDate")),
-        //                        Make = reader.GetString(reader.GetOrdinal("Make")),
-        //                        Model = reader.GetString(reader.GetOrdinal("Model"))
-        //                    };
-        //                }
-        //                else
-        //                {
-        //                    computer = new Computer
-        //                    {
-        //                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
-        //                        PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
-        //                        Make = reader.GetString(reader.GetOrdinal("Make")),
-        //                        Model = reader.GetString(reader.GetOrdinal("Model"))
-        //                    };
-        //                }
-        //                usedComputers.Add(computer);
-        //                    available = false;
-        //                }
-        //            reader.Close();
-
-        //            return Ok(usedComputers);
-        //        }
-        //    }
-        //}
-
-
         //Get a single computer by Id
         [HttpGet("{id}", Name = "GetComputer")]
         public async Task<IActionResult> Get([FromRoute] int id)
@@ -301,6 +248,10 @@ namespace BangazonAPI.Controllers
                 {
                     return NotFound();
                 }
+                if (ComputerInUse(id))
+                {
+                    return new StatusCodeResult(StatusCodes.Status403Forbidden);
+                }
                 else
                 {
                     throw;
@@ -319,6 +270,25 @@ namespace BangazonAPI.Controllers
                         SELECT Id, PurchaseDate, DecomissionDate, Make, Model
                         FROM Computer
                         WHERE Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    return reader.Read();
+                }
+            }
+        }
+
+        private bool ComputerInUse(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT Id, PurchaseDate, DecomissionDate, Make, Model
+                        FROM Computer
+                        WHERE Id = @id AND Id IN (SELECT ComputerId FROM Employee)";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
                     SqlDataReader reader = cmd.ExecuteReader();
