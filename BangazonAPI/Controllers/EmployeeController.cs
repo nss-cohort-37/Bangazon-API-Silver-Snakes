@@ -116,6 +116,119 @@ namespace BangazonAPI.Controllers
             }
         }
 
+        //POST
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] Employee employee)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"INSERT INTO Employee (FirstName, LastName, DepartmentId, IsSupervisor, ComputerId, Email)
+                                        OUTPUT INSERTED.Id
+                                        VALUES (@firstName, @lastName, @departmentId, @isSupervisor, @computerId, @email)";
+                    cmd.Parameters.Add(new SqlParameter("@firstName", employee.FirstName));
+                    cmd.Parameters.Add(new SqlParameter("@lastName", employee.LastName));
+                    cmd.Parameters.Add(new SqlParameter("@departmentId", employee.DepartmentId));
+                    cmd.Parameters.Add(new SqlParameter("@isSupervisor", employee.IsSupervisor));
+                    cmd.Parameters.Add(new SqlParameter("@computerId", employee.ComputerId));
+                    cmd.Parameters.Add(new SqlParameter("@email", employee.Email));
+
+                    int newId = (int)cmd.ExecuteScalar();
+                    employee.Id = newId;
+                    return CreatedAtRoute("GetEmployee", new { id = newId }, employee);
+                }
+            }
+        }
+
+        // Put
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Employee employee)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE Employee
+                                            SET FirstName = @firstName,
+                                            LastName = @lastName,
+                                            DepartmentId = @departmentId,
+                                            IsSupervisor = @isSupervisor,
+                                            ComputerId = @computerId,
+                                            Email = @email
+                                            WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@firstName", employee.FirstName));
+                        cmd.Parameters.Add(new SqlParameter("@lastName", employee.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@departmentId", employee.DepartmentId));
+                        cmd.Parameters.Add(new SqlParameter("@isSupervisor", employee.IsSupervisor));
+                        cmd.Parameters.Add(new SqlParameter("@computerId", employee.ComputerId));
+                        cmd.Parameters.Add(new SqlParameter("@email", employee.Email));
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            return new StatusCodeResult(StatusCodes.Status204NoContent);
+                        }
+                        throw new Exception("No rows affected");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                if (!EmployeeExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        //Delete
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"DELETE FROM Employee WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            return new StatusCodeResult(StatusCodes.Status204NoContent);
+                        }
+                        throw new Exception("No rows affected");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                if (!EmployeeExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+
+
         //Check method
         private bool EmployeeExists(int id)
         {
