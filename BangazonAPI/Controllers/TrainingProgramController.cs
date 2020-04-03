@@ -14,17 +14,12 @@ namespace BangazonAPI.Controllers
     [ApiController]
     public class TrainingProgramController : ControllerBase
     {
-
-
-
-
         private readonly IConfiguration _config;
 
         public TrainingProgramController(IConfiguration config)
         {
             _config = config;
         }
-
         public SqlConnection Connection
         {
             get
@@ -32,13 +27,6 @@ namespace BangazonAPI.Controllers
                 return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             }
         }
-
-
-
-
-
-
-
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -111,6 +99,28 @@ namespace BangazonAPI.Controllers
             }
         }
 
+        [HttpPost("{trainingProgramId}/employees")]
+        public async Task<IActionResult> Post([FromRoute] int trainingProgramId ,[FromBody] EmployeeTrainingProgram employeeTrainingProgram)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"INSERT INTO EmployeeTraining ( EmployeeId, TrainingProgramId  )
+                                        OUTPUT INSERTED.Id
+                                        VALUES (@EmployeeId, @TrainingProgramId)";
+                    cmd.Parameters.Add(new SqlParameter("@EmployeeId", employeeTrainingProgram.EmployeeId));
+                    cmd.Parameters.Add(new SqlParameter("@TrainingProgramId", employeeTrainingProgram.TrainingProgramId));
+                    int newId = (int)cmd.ExecuteScalar();
+                    employeeTrainingProgram.Id = newId;
+                    return CreatedAtRoute("GetTrainingProgram", new { id = newId }, employeeTrainingProgram);
+                }
+            }
+        }
+
+
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] TrainingProgram trainingProgram)
         {
@@ -126,7 +136,7 @@ namespace BangazonAPI.Controllers
                     cmd.Parameters.Add(new SqlParameter("@StartDate", trainingProgram.StartDate));
                     cmd.Parameters.Add(new SqlParameter("@EndDate", trainingProgram.EndDate));
                     cmd.Parameters.Add(new SqlParameter("@MaxAttendees", trainingProgram.MaxAttendees));
-                  
+
 
                     int newId = (int)cmd.ExecuteScalar();
                     trainingProgram.Id = newId;
@@ -134,6 +144,9 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
+
+
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] TrainingProgram trainingProgram)
         {
@@ -208,6 +221,81 @@ namespace BangazonAPI.Controllers
             catch (Exception)
             {
                 if (!TrainingProgramExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+
+        [HttpDelete("{trainingProgramId}/employees/{employeeId}")]
+        public async Task<IActionResult> Delete([FromRoute] int trainingProgramId, [FromBody] EmployeeTrainingProgram employeeTrainingProgram, [FromRoute] int employeeId)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+
+
+                        cmd.CommandText = @"SELECT Id, EmployeeId, TrainingProgramId
+                                        FROM EmployeeTraining
+                                        WHERE EmployeeTrainingId = @trainingProgramId AND EmployeeId = @employeeId";
+                        cmd.Parameters.Add(new SqlParameter("@employeeId", employeeId));
+                        cmd.Parameters.Add(new SqlParameter("@trainingProgramId", trainingProgramId));
+
+                        
+
+
+
+
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        EmployeeTrainingProgram currentEmployeeTrainingProgram = new EmployeeTrainingProgram()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            EmployeeId = reader.GetInt32(reader.GetOrdinal("EmployeeId")),
+                            TrainingProgramId = reader.GetInt32(reader.GetOrdinal("Id")),
+
+                        };
+
+
+                        using (SqlConnection connection = Connection)
+                        {
+                            connection.Open();
+                            using (SqlCommand command = connection.CreateCommand())
+                            {
+                                cmd.CommandText = @"Delete from EmployeeTraining
+                                           
+                                            WHERE TrainingProgramId = @trainingProgramId and EployeeId = @employeeId";
+
+                                cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                                int rowsAffected = cmd.ExecuteNonQuery();
+                                if (rowsAffected > 0)
+                                {
+                                    return new StatusCodeResult(StatusCodes.Status204NoContent);
+                                }
+                                throw new Exception("No rows affected");
+                            }
+                        }
+
+
+                    }
+
+
+
+                }
+            }
+
+            catch (Exception)
+            {
+                if (!TrainingProgramExists(trainingProgramId))
                 {
                     return NotFound();
                 }
