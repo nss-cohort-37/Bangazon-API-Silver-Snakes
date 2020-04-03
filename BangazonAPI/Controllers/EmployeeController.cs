@@ -29,7 +29,7 @@ namespace BangazonAPI.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] string firstName, [FromQuery] string lastName)
         {
             using (SqlConnection conn = Connection)
             {
@@ -37,7 +37,14 @@ namespace BangazonAPI.Controllers
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"SELECT Id, FirstName, LastName,  DepartmentId, IsSupervisor, ComputerId, Email
-                        FROM Employee";
+                        FROM Employee
+                        WHERE 1 = 1";
+                    if (firstName != null && lastName != null)
+                    {
+                        cmd.CommandText += " AND FirstName LIKE @FirstName AND LastName LIKE @LastName";
+                        cmd.Parameters.Add(new SqlParameter("@FirstName", "%" + firstName + "%"));
+                        cmd.Parameters.Add(new SqlParameter("@LastName", "%" + lastName + "%"));
+                    }
                     SqlDataReader reader = cmd.ExecuteReader();
                     List<Employee> employees = new List<Employee>();
 
