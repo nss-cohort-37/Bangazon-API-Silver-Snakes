@@ -28,12 +28,12 @@ namespace BangazonAPI.Controllers
             }
         }
         /// <summary>
-        /// 
+        /// Get all products
         /// </summary>
         /// <param name="q">Query String to search for a word in the Title or Description, will return anything containing the search term</param>
         /// <param name="OrderBy">To order by Popularity put "popularity" to order by Recent put "recent" to order by Price put "price"</param>
         /// <param name="asc">When ordering by "price" if True will order by ascending, if false will order by descending</param>
-        /// <returns></returns>
+        /// <returns>List of available products</returns>
         //Get All
         [HttpGet]
 
@@ -107,7 +107,11 @@ namespace BangazonAPI.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Get Products by ID
+        /// </summary>
+        /// <param name="id">Search all products by Id by entering product Id integer</param>
+        /// <returns>The Individual product associated with that Id</returns>
         //GET BY ID
         [HttpGet("{id}", Name = "GetProduct")]
         public async Task<IActionResult> Get([FromRoute] int id)
@@ -146,7 +150,12 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
-
+        /// <summary>
+        /// Posts a new product
+        /// </summary>
+        /// <param name="product">Enter the fields to create a new product \br ProductTypeId \br Customer Id \br Price \br Title 
+        ///  Description \br</param>
+        /// <returns>The new instance of the created product</returns>
         //POST
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Product product)
@@ -173,7 +182,12 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
-
+        /// <summary>
+        /// Can edit each prodcut
+        /// </summary>
+        /// <param name="id">Finds the product by Id to be edited, Id must be included to edit</param>
+        /// <param name="product">allows you to edit the product information</param>
+        /// <returns>the New product and updated properties</returns>
         // Put
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Product product)
@@ -220,7 +234,11 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
-
+        /// <summary>
+        /// Product can be deleted
+        /// </summary>
+        /// <param name="id">Finds the product by the Id for deletion</param>
+        /// <returns>Deletes Product</returns>
         //Delete
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
@@ -258,7 +276,11 @@ namespace BangazonAPI.Controllers
         }
 
 
-
+        /// <summary>
+        /// Checks to see if the product exists already
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         //Check method
         private bool ProductExists(int id)
         {
