@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace BangazonAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]s")]
     [ApiController]
     public class CustomerController : ControllerBase
     {
@@ -29,6 +29,10 @@ namespace BangazonAPI.Controllers
                 return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             }
         }
+        /// <summary>
+        /// View all customers
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -70,7 +74,12 @@ namespace BangazonAPI.Controllers
         }
 
 
-
+        /// <summary>
+        /// View a single customer
+        /// </summary>
+        /// <param name="id">The Id of customer you want to look up</param>
+        /// <param name="include">Type products if you would like to view the products that customer is selling"</param>
+        /// <returns></returns>
         [HttpGet("{id}", Name = "GetCustomer")]
         public async Task<IActionResult> Get([FromRoute] int id, [FromQuery] string include)
         {
@@ -139,7 +148,21 @@ namespace BangazonAPI.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Add a customer to the customers table
+        /// </summary>
+        /// <param name="customer"> Created Date is auto set to now \
+        /// Must include : \
+        /// firstName: string \
+        /// lastName: string \
+        /// active: bool \
+        /// address: string \
+        /// city: string \
+        /// state: string \
+        /// email: string \
+        /// phone: string
+        /// </param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Customer customer)
         {
@@ -181,7 +204,20 @@ namespace BangazonAPI.Controllers
 
 
 
-
+        /// <summary>
+        /// Update a customer
+        /// </summary>
+        /// <param name="id"> Id of customer you are trying to edit</param>
+        /// <param name="customer">
+        ///  /// firstName: string \
+        /// lastName: string \
+        /// active: bool \
+        /// address: string \
+        /// city: string \
+        /// state: string \
+        /// email: string \
+        /// phone: string</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Customer customer)
         {
@@ -237,7 +273,14 @@ namespace BangazonAPI.Controllers
 
 
 
-
+        /// <summary>
+        /// Soft Delete. Set customer active field to false
+        /// </summary>
+        /// <param name="id">Id of customer you want to make inactive</param>
+        /// <param name="customer"> 
+        /// id = int \
+        /// active = false</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id, [FromBody] Customer customer)
         {
