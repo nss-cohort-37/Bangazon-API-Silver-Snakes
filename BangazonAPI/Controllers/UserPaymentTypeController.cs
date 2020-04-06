@@ -67,7 +67,11 @@ namespace BangazonAPI.Controllers
         //    }
         //}
 
-
+        /// <summary>
+        /// Gets all Payment Types for the specific customer
+        /// </summary>
+        /// <param name="customerId">Enter the desired customer Id</param>
+        /// <returns>Customers payment types</returns>
         //Get User Payment Types
         [HttpGet]
 
@@ -106,6 +110,11 @@ namespace BangazonAPI.Controllers
 
             }
         }
+        /// <summary>
+        /// Creates a new userPaymentType instance
+        /// </summary>
+        /// <param name="userPaymentType">Assigns the payment type to the user</param>
+        /// <returns>New User paymentType</returns>
         //POST
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] UserPaymentType userPaymentType)
@@ -129,7 +138,12 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
-
+        /// <summary>
+        /// Edit a user payment Type
+        /// </summary>
+        /// <param name="id">Enter user payment type Id</param>
+        /// <param name="userPaymentType">Update information for the payment type \ customerId \ paymentTypeId \ AcctNumber \ Active</param>
+        /// <returns>The updated user payment type</returns>
         // Put
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] UserPaymentType userPaymentType)
@@ -174,7 +188,12 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
-
+        /// <summary>
+        /// Soft Delete of user payment type, only makes type inactive
+        /// </summary>
+        /// <param name="id">enter sepcific payment type Id</param>
+        /// <param name="userPaymentType">change active to = false</param>
+        /// <returns>non active payment type</returns>
         //Soft "Delete" a paymentType
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id, [FromBody] UserPaymentType userPaymentType)
@@ -213,7 +232,11 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
-
+        /// <summary>
+        /// Checks to see if userPaymentType is already exisiting
+        /// </summary>
+        /// <param name="id">searches for Id</param>
+        /// <returns>if exists will return true</returns>
         //Check method
         private bool UserPaymentTypeExists(int id)
         {
