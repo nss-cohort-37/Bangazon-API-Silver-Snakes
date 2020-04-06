@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace BangazonAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]s")]
     [ApiController]
     public class EmployeeController : ControllerBase
     {
@@ -28,6 +28,12 @@ namespace BangazonAPI.Controllers
                 return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             }
         }
+        /// <summary>
+        /// Gets a list of all employees
+        /// </summary>
+        /// <param name="firstName">Finds Employees with the searched first name</param>
+        /// <param name="lastName">finds employees with the searched last name</param>
+        /// <returns>a list of those employees</returns>
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] string firstName, [FromQuery] string lastName)
         {
@@ -71,7 +77,11 @@ namespace BangazonAPI.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Searches for each employee by Id
+        /// </summary>
+        /// <param name="id">enter Id of desired employee</param>
+        /// <returns>Singular Employee</returns>
         //GET BY ID
         [HttpGet("{id}", Name = "GetEmployee")]
         public async Task<IActionResult> Get([FromRoute] int id)
@@ -122,7 +132,11 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
-
+        /// <summary>
+        /// Creates a new instance of an employee
+        /// </summary>
+        /// <param name="employee">Enter desired information</param>
+        /// <returns>Nw employee</returns>
         //POST
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Employee employee)
@@ -148,7 +162,12 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
-
+        /// <summary>
+        /// Allows for editing of an employee
+        /// </summary>
+        /// <param name="id">Searches for employee by Id</param>
+        /// <param name="employee">Enter edited employee information</param>
+        /// <returns>Updated Employee</returns>
         // Put
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Employee employee)
@@ -197,7 +216,11 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
-
+        /// <summary>
+        /// Allows for deletion of an employee
+        /// </summary>
+        /// <param name="id">Finds employee by Id</param>
+        /// <returns>Deletes Employee</returns>
         //Delete
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
@@ -235,7 +258,11 @@ namespace BangazonAPI.Controllers
         }
 
 
-
+        /// <summary>
+        /// Checks to see if Employee exists
+        /// </summary>
+        /// <param name="id">searches by Id</param>
+        /// <returns>True if employee exists</returns>
         //Check method
         private bool EmployeeExists(int id)
         {
