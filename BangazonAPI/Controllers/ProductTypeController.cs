@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace BangazonAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]s")]
     [ApiController]
     public class ProductTypeController : ControllerBase
     {
@@ -28,7 +28,10 @@ namespace BangazonAPI.Controllers
                 return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             }
         }
-
+        /// <summary>
+        /// Get all product Types
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -57,6 +60,12 @@ namespace BangazonAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get product type by Id
+        /// </summary>
+        /// <param name="id">Id of the product type you want</param>
+        /// <param name="include">put include=products in url to see the products of that type</param>
+        /// <returns></returns>
         [HttpGet("{id}", Name = "GetProductType")]
         public async Task<IActionResult> Get([FromRoute] int id, [FromQuery] string include)
         {
@@ -125,6 +134,12 @@ namespace BangazonAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Add a product type
+        /// </summary>
+        /// <param name="productType">Must include: \
+        /// name: string</param>
+        /// <returns></returns>
             [HttpPost]
         public async Task<IActionResult> Post([FromBody] ProductType productType)
         {
@@ -151,7 +166,14 @@ namespace BangazonAPI.Controllers
         }
 
 
-
+        /// <summary>
+        /// Update product type
+        /// </summary>
+        /// <param name="id">Id of product type you want to edit</param>
+        /// <param name="productType">Must include: \
+        /// id: int \
+        /// name: string \</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] ProductType productType)
         {
