@@ -29,6 +29,10 @@ namespace BangazonAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets all the departments.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -61,6 +65,12 @@ namespace BangazonAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets department by Id.
+        /// </summary>
+        /// <param name="id">Any valid department Id.</param>
+        /// <param name="include">Takes the query string "employees" to return employees in the given department.</param>
+        /// <returns></returns>
         [HttpGet("{id}", Name = "GetDepartments")]
         public async Task<IActionResult> Get(
             [FromRoute] int id,
@@ -122,6 +132,11 @@ namespace BangazonAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Creates a new department.
+        /// </summary>
+        /// <param name="department">Takes name and budget from a Department object from the body.</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Department department)
         {
@@ -143,6 +158,12 @@ namespace BangazonAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Updates a department specified by Id
+        /// </summary>
+        /// <param name="id">Any valid department Id.</param>
+        /// <param name="department">Takes name and budget from a Department object from the body.</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Department department)
         {
