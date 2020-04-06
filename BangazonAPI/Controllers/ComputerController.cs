@@ -35,7 +35,7 @@ namespace BangazonAPI.Controllers
         /// If false, selects computers that are either assigned to an employee or decomissioned.</param>
         /// <returns>List of Computer objects</returns>
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] bool available)
+        public async Task<IActionResult> Get([FromQuery] bool? available)
         {
             using (SqlConnection conn = Connection)
             {
