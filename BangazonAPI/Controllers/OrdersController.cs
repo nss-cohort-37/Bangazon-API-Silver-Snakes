@@ -29,6 +29,12 @@ namespace BangazonAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get orders by a customer's Id. Can query to see a customers shopping cart.
+        /// </summary>
+        /// <param name="customerId">Any valid customer Id.</param>
+        /// <param name="cart">If true, will return the customer's shopping cart if they have one active.</param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetOrdersByCustomerId(
             [FromQuery] Int32? customerId,
@@ -152,6 +158,11 @@ namespace BangazonAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Get an order by an Id.
+        /// </summary>
+        /// <param name="id">Will return the specified order if Id is valid with an array of products purchased on the order.</param>
+        /// <returns></returns>
         [HttpGet("{id}", Name = "GetOrder")]
         public async Task<IActionResult> GetOrderById([FromRoute] int id)
         {
@@ -207,6 +218,11 @@ namespace BangazonAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Add a product to an active shopping cart, or create a shopping cart for the product to go in.
+        /// </summary>
+        /// <param name="custProd">Takes the purchasing customerId as well as the productId from a CustomerProduct object.</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CustomerProduct custProd)
         {
@@ -272,6 +288,12 @@ namespace BangazonAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Purchase order in customer's cart.
+        /// </summary>
+        /// <param name="id">Any valid orderId of an active shopping cart.</param>
+        /// <param name="order">Takes the customerId and userPaymentTypeId from an order object from the body.</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Order order)
         {
@@ -312,6 +334,12 @@ namespace BangazonAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Remove a product from an active shopping cart.
+        /// </summary>
+        /// <param name="orderId">OrderId of the active shopping cart.</param>
+        /// <param name="productId">ProductId of the product you want removed from the shopping cart.</param>
+        /// <returns></returns>
         [HttpDelete("{orderId}/products{productId}")]
         public async Task<IActionResult> Delete(
             [FromRoute] int orderId,

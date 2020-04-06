@@ -22,12 +22,24 @@ namespace BangazonAPI
             Configuration = configuration;
         }
 
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                builder =>
+                {
+                    builder.WithOrigins("http://bangazon.com",
+                                        "https://bangazonclient.web.app").AllowAnyHeader().AllowAnyMethod();
+                });
+            });
 
             services.AddSwaggerGen(c =>
             {
@@ -48,7 +60,9 @@ namespace BangazonAPI
                 app.UseDeveloperExceptionPage();
                 
             }
-            
+
+            app.UseCors(MyAllowSpecificOrigins);
+
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
