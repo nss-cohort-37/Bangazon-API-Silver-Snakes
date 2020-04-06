@@ -27,7 +27,13 @@ namespace BangazonAPI.Controllers
                 return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="q">Query String to search for a word in the Title or Description, will return anything containing the search term</param>
+        /// <param name="OrderBy">To order by Popularity put "popularity" to order by Recent put "recent" to order by Price put "price"</param>
+        /// <param name="asc">When ordering by "price" if True will order by ascending, if false will order by descending</param>
+        /// <returns></returns>
         //Get All
         [HttpGet]
 
