@@ -29,7 +29,10 @@ namespace BangazonAPI.Controllers
             }
         }
 
-
+        /// <summary>
+        /// View revenue report for each product type
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Get()
         {

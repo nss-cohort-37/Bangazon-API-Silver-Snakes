@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace BangazonAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]s")]
     [ApiController]
     public class TrainingProgramController : ControllerBase
     {
@@ -27,6 +27,11 @@ namespace BangazonAPI.Controllers
                 return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             }
         }
+
+        /// <summary>
+        /// Get all Training Programs
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -59,7 +64,11 @@ namespace BangazonAPI.Controllers
                 }
             }
         }
-
+        /// <summary>
+        /// View a specific training program by id
+        /// </summary>
+        /// <param name="id"> id of traingin program you want to view</param>
+        /// <returns></returns>
         [HttpGet("{id}", Name = "GetTrainingProgram")]
         public async Task<IActionResult> Get([FromRoute] int id)
         {
@@ -99,6 +108,15 @@ namespace BangazonAPI.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Add an employee to a training program
+        /// </summary>
+        /// <param name="trainingProgramId">id of program that the employee is being added to</param>
+        /// <param name="employeeTrainingProgram">
+        /// trainingProgramId: int [From Route] \
+        /// employeeId: int (Id of employee you are adding)</param>
+        /// <returns></returns>
         [HttpPost("{trainingProgramId}/employees")]
         public async Task<IActionResult> Post([FromRoute] int trainingProgramId ,[FromBody] EmployeeTrainingProgram employeeTrainingProgram)
         {
@@ -120,7 +138,16 @@ namespace BangazonAPI.Controllers
         }
 
 
-
+        /// <summary>
+        /// Add a training program
+        /// </summary>
+        /// <param name="trainingProgram">Must include: \
+        /// name: string \
+        /// startDate: datetime \
+        /// endDate: dateTime \
+        /// maxAttendees: int 
+        /// </param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] TrainingProgram trainingProgram)
         {
@@ -146,7 +173,17 @@ namespace BangazonAPI.Controllers
         }
 
 
-
+        /// <summary>
+        /// Edit a training program
+        /// </summary>
+        /// <param name="id">Id of program you want to edit</param>
+        /// <param name="trainingProgram">Must include: \
+        /// id: int [FromRoute] \
+        /// name: string \
+        /// startDate: datetime \
+        /// endDate: dateTime \
+        /// maxAttendees: int </param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] TrainingProgram trainingProgram)
         {
@@ -193,6 +230,14 @@ namespace BangazonAPI.Controllers
 
 
         }
+
+
+        /// <summary>
+        /// Delete training program
+        /// </summary>
+        /// <param name="id"> Id of training program you want to delete</param>
+        /// <param name="trainingProgram"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id, [FromBody] TrainingProgram trainingProgram)
         {
@@ -232,6 +277,12 @@ namespace BangazonAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Remove an employee from a training program
+        /// </summary>
+        /// <param name="trainingProgramId"> Id of training program</param>
+        /// <param name="employeeId"> Id of employee</param>
+        /// <returns></returns>
         [HttpDelete("{trainingProgramId}/employees/{employeeId}")]
         public async Task<IActionResult> Delete([FromRoute] int trainingProgramId, [FromRoute] int employeeId)
         {
