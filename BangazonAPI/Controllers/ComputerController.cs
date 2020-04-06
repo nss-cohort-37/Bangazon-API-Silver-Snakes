@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace BangazonAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]s")]
     [ApiController]
     public class ComputerController : ControllerBase
     {
@@ -28,7 +28,12 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        //Get all computers from the database
+        /// <summary>
+        /// Get All Computers
+        /// </summary>
+        /// <param name="available">If true, selects all computers unassigned to an employee and not decomisioned. 
+        /// If false, selects computers that are either assigned to an employee or decomissioned.</param>
+        /// <returns>List of Computer objects</returns>
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] bool available)
         {
@@ -89,7 +94,11 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        //Get a single computer by Id
+        /// <summary>
+        /// Gets a Single Computer By Id
+        /// </summary>
+        /// <param name="id">Id of computer to display</param>
+        /// <returns>A single computer</returns>
         [HttpGet("{id}", Name = "GetComputer")]
         public async Task<IActionResult> Get([FromRoute] int id)
         {
@@ -145,7 +154,17 @@ namespace BangazonAPI.Controllers
         }
 
 
-        //Add a new computer
+        /// <summary>
+        /// Creates a new computer object
+        /// </summary>
+        /// <param name="computer"> Creates a computer object with the provided body values\
+        /// Purchased Date is auto set to now \
+        /// Must include : \
+        /// PurchaseDate: DateTime \
+        /// Make: string \
+        /// Model: string  
+        /// </param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Computer computer)
         {
@@ -173,7 +192,17 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        //Update a computer record
+        /// <summary>
+        /// Updates a computer record
+        /// </summary>
+        /// <param name="id">Id of computer to edit</param>
+        /// <param name="computer">Edits the computer object with the provided body values\
+        /// Must include : \
+        /// PurchaseDate: DateTime \
+        /// Make: string \
+        /// Model: string  
+        /// </param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Computer computer)
         {
@@ -219,7 +248,11 @@ namespace BangazonAPI.Controllers
         }
 
 
-        //Delete a computer record
+        /// <summary>
+        /// Deletes a computer object from the database
+        /// </summary>
+        /// <param name="id">Id of computer to delete</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {

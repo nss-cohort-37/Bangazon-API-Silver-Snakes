@@ -29,7 +29,10 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        //Get all paymentTypes from the database
+        /// <summary>
+        /// Gets all Payment Types from the database
+        /// </summary>
+        /// <returns>List of Payment Types</returns>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -63,7 +66,11 @@ namespace BangazonAPI.Controllers
         }
 
 
-        //Get a single paymentType by Id
+        /// <summary>
+        /// Get a single payment type by Id
+        /// </summary>
+        /// <param name="id">Id of payment type to display</param>
+        /// <returns>A single payment type</returns>
         [HttpGet("{id}", Name = "GetPaymentType")]
         public async Task<IActionResult> Get([FromRoute] int id)
         {
@@ -103,7 +110,15 @@ namespace BangazonAPI.Controllers
         }
 
 
-        //Create a new paymentType
+        /// <summary>
+        /// Create a new Payment Type
+        /// </summary>
+        /// <param name="paymentType">Creates a new Payment Type with provided body values \
+        /// Must include : \
+        /// Name: string \
+        /// Active: boolean
+        ///</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] PaymentType paymentType)
         {
@@ -125,7 +140,15 @@ namespace BangazonAPI.Controllers
             }
         }
 
-        //Soft "Delete" a paymentType
+        /// <summary>
+        /// Changes the active property of the selected computer
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="paymentType"> \
+        /// Must include : \
+        /// Name: string \
+        /// Active: boolean</param> 
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] PaymentType paymentType)
         {
